@@ -98,7 +98,7 @@ _THEMES = [
 
 def get_user_message() -> str:
     """Return a user-turn message with a randomly chosen theme."""
-    theme = random.choice(_THEMES)
+    theme = random.choice(_THEMES)  # nosec B311 — not a security context
     return f"What would you like to display on the board today? Theme: {theme}"
 
 

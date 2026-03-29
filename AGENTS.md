@@ -34,12 +34,11 @@ DRY_RUN=true ANTHROPIC_API_KEY=sk-ant-... poetry run vesta-claude
 
 ## Container runtime
 
-This machine uses **Finch** (not Docker). Always use `finch` in place of `docker`.
-The target deployment architecture is **linux/amd64** — always pass `--platform linux/amd64` when building.
+Use Docker (or any OCI-compatible runtime). The target deployment architecture is **linux/amd64** — always pass `--platform linux/amd64` when building.
 
 ```bash
-finch build --platform linux/amd64 -t vesta-claude .
-finch run --rm -e DRY_RUN=true -e ANTHROPIC_API_KEY=sk-ant-... vesta-claude
+docker build --platform linux/amd64 -t vesta-claude .
+docker run --rm -e DRY_RUN=true -e ANTHROPIC_API_KEY=sk-ant-... vesta-claude
 ```
 
 ## Key constraints

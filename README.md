@@ -4,6 +4,45 @@ Populates a [Vestaboard](https://www.vestaboard.com) split-flap display with AI-
 
 The script runs as a short-lived container: it calls Claude, converts the response to Vestaboard character codes, and sends it to the Vestaboard Cloud API — then exits. Run it on a schedule (cron, Kubernetes CronJob, etc.) to keep the board fresh.
 
+## Examples
+
+Each run generates a fresh message. Running with `DRY_RUN=true` (the default) renders the board in your terminal:
+
+```
++----------------------+
+|                      |
+| EVERY ROOM YOU LEAVE |
+| BECOMES A DIFFERENT  |
+|         ROOM         |
+|                      |
+|                      |
++----------------------+
+```
+
+```
++----------------------+
+|                      |
+|                      |
+|  WHAT YEAR DO YOUR   |
+|  BONES THINK IT IS   |
+|                      |
+|                      |
++----------------------+
+```
+
+```
++----------------------+
+|                      |
+|                      |
+| NOTHING IS FINISHED. |
+|    IT ONLY STOPS.    |
+|                      |
+|                      |
++----------------------+
+```
+
+The prompt is intentionally open-ended — Claude picks the theme, mood, and form each time. Edit `vesta_claude/prompt.py` to steer it toward something specific.
+
 ## How it works
 
 1. Claude is prompted with a description of the board's constraints and what you'd like it to display (edit `vesta_claude/prompt.py` to change the content).
@@ -15,7 +54,7 @@ The script runs as a short-lived container: it calls Claude, converts the respon
 
 - Python 3.13+
 - [Poetry](https://python-poetry.org/) (dev)
-- [Finch](https://runfinch.com/) or Docker (production)
+- Docker (or any OCI-compatible runtime)
 - Claude credentials — either an Anthropic API key **or** AWS credentials for Bedrock
 - A Vestaboard Cloud API token (cloud.vestaboard.com → Settings → API Tokens) — not required for dry runs
 
@@ -57,22 +96,22 @@ poetry run vesta-claude
 
 ```bash
 # Build
-finch build --platform linux/amd64 -t vesta-claude .
+docker build --platform linux/amd64 -t vesta-claude .
 
 # Dry run via Anthropic
-finch run --rm \
+docker run --rm \
   -e ANTHROPIC_API_KEY=sk-ant-... \
   vesta-claude
 
 # Dry run via AWS Bedrock
-finch run --rm \
+docker run --rm \
   -e AWS_ACCESS_KEY_ID=... \
   -e AWS_SECRET_ACCESS_KEY=... \
   -e AWS_DEFAULT_REGION=us-east-1 \
   vesta-claude
 
 # Send to board
-finch run --rm \
+docker run --rm \
   -e DRY_RUN=false \
   -e ANTHROPIC_API_KEY=sk-ant-... \
   -e VESTABOARD_API_TOKEN=your-cloud-token \
